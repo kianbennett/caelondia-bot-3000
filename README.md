@@ -6,7 +6,7 @@ A bot for the Caelondia discord server.
 
 1. Install [node.js](https://nodejs.org/en/)
 2. Run `npm init` to create a node_modules folder from `package.json`
-3. Create the file `auth.json`, this will contain the bot token and any api keys (see auth.example.json)
+3. Create the file `auth.json`, this will contain the bot token and any api keys (see `auth.example.json`)
 4. Run `node bot.js` to start the bot
 
 ## Usage
