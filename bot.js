@@ -374,6 +374,38 @@ function parseMessage(message) {
 			}
 		}
 	}
+	if(cmd == "elaineelaineelaine") {
+		message.channel.send("*Beeeeennnnn!!!!*");
+		return;
+	}
+	if(cmd == "hurryupjazer") {
+		url = "https://api.github.com/repos/nythril/quaver/branches/nightly";
+		getJsonFromUrl(url, function(body) {
+			var iso8601 = body.commit.commit.author.date;
+			var dateCurrent = new Date();
+			var dateCommit = new Date(iso8601);
+			var interval = dateInterval(dateCommit, dateCurrent);
+
+			var str = "It has been ";
+			if(interval.years > 0) {
+				str += interval.years + " years";
+			} else if(interval.months > 0) {
+				str += interval.months + " months" + (interval.days > 0 ? " and " + interval.days + " days" : "");	
+			} else if(interval.days > 0) {
+				str += interval.days + " days and " + interval.hours + " hours";
+			} else if(interval.hours > 0) {
+				str += interval.hours + " hours and " + interval.minutes + " minutes";
+			} else {
+				str += interval.minutes + " minutes";
+			}
+
+			message.channel.send(str + " since Quaver's last nightly commit. Get a move on!");
+		}, null, {
+			// Github api requests require a User-Agent in the header
+			headers: { 'User-Agent': 'KianBennett' }
+		});
+		return;
+	}
 	if(cmd == "help") {
 		message.channel.send(getHelpText());
 		return;
@@ -386,12 +418,17 @@ function parseMessage(message) {
 	message.channel.send("*unrecognised command. beep boop.*");
 }
 
-function getJsonFromUrl(url, onResponse, onError) {
-	request.get({ url:url, json:true }, function (error, response, body) {
+function getJsonFromUrl(url, onResponse, onError, opt) {
+	var options = { url:url, json:true };
+	// Merge the values of options parameter into the default options
+	if(opt != undefined) {
+		options = Object.assign(options, opt);
+	}
+	request.get(options, function (error, response, body) {
     	if (!error && response.statusCode == 200) {
     		if(onResponse) onResponse(body);
     	} else {
-    		if(onError) onError(error);
+    		if(onError) onError(JSON.stringify(response));
     	}
 	});
 }
@@ -491,4 +528,45 @@ var Insulter = {
 
 function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1);
+}
+
+// from https://stackoverflow.com/questions/1968167/difference-between-dates-in-javascript
+function dateInterval(date1, date2) {
+    if (date1 > date2) { // swap
+        var result = interval(date2, date1);
+        result.years  	= -result.years;
+        result.months 	= -result.months;
+        result.days   	= -result.days;
+        result.hours  	= -result.hours;
+        result.minutes 	= -result.minutes;
+        return result;
+    }
+    result = {
+        years:  	date2.getYear()  - date1.getYear(),
+        months: 	date2.getMonth() - date1.getMonth(),
+        days:   	date2.getDate()  - date1.getDate(),
+        hours:  	date2.getHours() - date1.getHours(),
+        minutes:  	date2.getMinutes() - date1.getMinutes()
+    };
+    if(result.minutes < 0) {
+    	result.hours--;
+    	result.minutes += 60;
+    }
+    if (result.hours < 0) {
+        result.days--;
+        result.hours += 24;
+    }
+    if (result.days < 0) {
+        result.months--;
+        // days = days left in date1's month, 
+        //   plus days that have passed in date2's month
+        var copy1 = new Date(date1.getTime());
+        copy1.setDate(32);
+        result.days = 32-date1.getDate()-copy1.getDate()+date2.getDate();
+    }
+    if (result.months < 0) {
+        result.years--;
+        result.months+=12;
+    }
+    return result;
 }
