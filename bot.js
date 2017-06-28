@@ -1,6 +1,6 @@
 const request = require('request');
 const translate = require('google-translate-api');
-// const music = require('discord.js-music-v11');
+var exec = require('child_process').exec;
 const music = require('./music.js');
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -415,6 +415,23 @@ function parseMessage(message) {
 		client.destroy();
 		return;
 	}
+	if(cmd == "update") {
+		message.channel.send("*checking for updates. beep boop.*");
+
+		console.log("sending pull request...");
+		// sends github pull request. if an update is found nodemon will automatically detect it and restart
+		exec('git pull origin master', function(error, stdout, stderr) {
+			console.log(stdout);
+		});
+		return;
+	}
+	// if(cmd == "restart") {
+	// 	exec('rs', function(error, stdout, stderr) {
+	// 		message.channel.send("*restarting... beep boop...*");
+	// 		console.log(stderr);
+	// 	});
+	// 	return;
+	// }
 	message.channel.send("*unrecognised command. beep boop.*");
 }
 

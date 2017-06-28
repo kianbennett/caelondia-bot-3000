@@ -1,0 +1,9 @@
+{
+	"ignore": [
+		".git",
+		"node_modules/**/node_modules",
+		"nodemon.json",
+		"*.example.json",
+		"README.md"
+	]
+}
