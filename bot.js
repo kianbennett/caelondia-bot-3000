@@ -18,6 +18,9 @@ client.login(auth.bot_token);
 // On bot start
 client.on("ready", () => {
   	console.log("Bot started!");
+
+  	const hook = new Discord.WebhookClient('auth.webhook_id', 'auth.webhook_token');
+	// hook.send('I am alive!');
 });
 
 // Listen for messages
@@ -425,13 +428,6 @@ function parseMessage(message) {
 		});
 		return;
 	}
-	// if(cmd == "restart") {
-	// 	exec('rs', function(error, stdout, stderr) {
-	// 		message.channel.send("*restarting... beep boop...*");
-	// 		console.log(stderr);
-	// 	});
-	// 	return;
-	// }
 	message.channel.send("*unrecognised command. beep boop.*");
 }
 

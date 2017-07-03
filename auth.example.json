@@ -1,5 +1,7 @@
 {
 	"bot_token": "BOT TOKEN HERE",
 	"riot_api_key": "RIOT API KEY HERE",
-	"championgg_api_key": "CHAMPION.GG API KEY HERE"
+	"championgg_api_key": "CHAMPION.GG API KEY HERE",
+	"webhook_id": "",
+	"webhook_token" : ""
 }
