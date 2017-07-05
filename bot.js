@@ -188,7 +188,7 @@ function parseMessage(message) {
 		translate(str, { from: split[1], to: split[2] }).then(res => {
 		    message.channel.send(res.text);
 		}).catch(err => {
-		    console.error(err);
+		    message.channel.send("*" + err.message.toLowerCase() + ". beep boop.*")
 		});
 		return;
 	}
