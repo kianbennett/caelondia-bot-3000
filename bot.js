@@ -82,10 +82,13 @@ function parseMessage(message) {
 			getJsonFromUrl(url, function(body) {
 				for (var page in body.query.pages) {
         			var extract = body.query.pages[page].extract;
+
         			if(extract == undefined) {
 						message.channel.send("*i can't find anything about that. beep boop.*");
 						return;
         			}
+
+					extract = extract.split('\n')[0]; // only get the first paragraph
         			if (extract.length >= 2000) {
         				extract = extract.substring(0, 1950) + "...\n\n*too long for me. beep boop.*";
         			}
@@ -317,7 +320,7 @@ function parseMessage(message) {
 			message.channel.send("*i need more than that. beep boop.*");
 			return;
 		} else {
-			var cmd2 = cmd.substr(spaceIndex + 1)
+			var cmd2 = cmd.substr(spaceIndex + 1);
 			if(cmd2 == "join") {
 				music.join(client, message);
 				return;
@@ -428,6 +431,60 @@ function parseMessage(message) {
 		});
 		return;
 	}
+	if(cmd.startsWith("embed")) {
+		if(spaceIndex == -1) {
+			message.channel.send("*give me something to embed. beep boop.*");
+			return;
+		} else {
+			var text = cmd.substr(spaceIndex + 1);
+			message.channel.send({embed: {
+		  		description: text
+			}});
+			message.delete();
+			return;
+		}
+		return;
+	}
+	if(cmd.startsWith("cowsay")) {
+		if(spaceIndex == -1) {
+			message.channel.send("*give me something to say. beep boop.*");
+		} else {
+			var text = cmd.substr(spaceIndex + 1);
+
+			text = 
+				"____________\n" + 
+				"< " + text + " >\n" + 
+ 				"------------\n" +
+				"		\\    ^__^\n" + 
+				"		  \\  (oo)\\_______\n" + 
+				"			  (__)\\       )\\/\\\n" + 
+				"				||---- w |\n" + 
+			    "				||      ||\n";
+			message.channel.send({embed: {
+		  		description: text
+			}});
+		}
+		return;
+	}
+	if(cmd.startsWith("engrish")) {
+		if(spaceIndex == -1) {
+			message.channel.send("*give me something to say. beep boop.*");
+		} else {
+			var text = cmd.substr(spaceIndex + 1);
+
+			translate(text, { from: 'en', to: 'ja' }).then(res => {
+				var jp = res.text;
+				translate(jp, { from: 'ja', to: 'en' }).then(res => {
+		    		message.channel.send(res.text);
+				}).catch(err => {
+				    message.channel.send("*" + err.message.toLowerCase() + ". beep boop.*")
+				});
+			}).catch(err => {
+			    message.channel.send("*" + err.message.toLowerCase() + ". beep boop.*")
+			});
+		}
+		return;
+	}
 	message.channel.send("*unrecognised command. beep boop.*");
 }
 
@@ -456,6 +513,8 @@ function getHelpText() {
 	"!8ball <question>\n" +
 	"!insult <victim(s)>\n" +
 	"!translate <from> <to> <text>\n" +
+	"!ermahgerd <text>\n" +
+	"!engrish <text>\n" + 
 	"!league <summoner>\n" +
 	"!role <role>\n" +
 	"!bans\n" +

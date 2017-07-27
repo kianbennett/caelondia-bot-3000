@@ -82,6 +82,7 @@ module.exports = {
 
 		// Resume and stop playing.
 		const dispatcher = voiceConnection.player.dispatcher;
+		if(dispatcher == undefined) return msg.channel.send(wrap('dispatcher is undefined'));  
 		if (voiceConnection.paused) dispatcher.resume();
 		dispatcher.end();
 	},
@@ -150,6 +151,7 @@ module.exports = {
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection !== null && queue.length > 0) {
 			const dispatcher = voiceConnection.player.dispatcher;
+			if(dispatcher == undefined) return msg.channel.send(wrap('dispatcher is null'));
 			queueStatus = dispatcher.paused ? 'paused' : 'playing';
 
 			var queueText = "";
@@ -182,7 +184,7 @@ module.exports = {
 
 		msg.channel.send(wrap('song resumed'));
 		const dispatcher = voiceConnection.player.dispatcher;
-		if (dispatcher.paused) dispatcher.resume();
+		if (dispatcher != undefined && dispatcher.paused) dispatcher.resume();
 	},
 
 	volume: function(client, msg, volume) {
@@ -191,6 +193,7 @@ module.exports = {
 		}
 
 		// Get the voice connection.
+		if(msg.guild === null) return msg.channel.send(wrap('cannot do that, msg.guild is null'));
 		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == msg.guild.id);
 		if (voiceConnection === null) return msg.channel.send(wrap('no music being played'));
 
@@ -200,7 +203,7 @@ module.exports = {
 		if (volume > 200 || volume < 0) return msg.channel.send(wrap('volume out of range (0 to 200)'));
 
 		msg.channel.send(wrap("volume set to " + volume));
-		dispatcher.setVolume((volume / 100));
+		if(dispatcher != undefined) dispatcher.setVolume((volume / 100));
 		userVolume = volume;
 	}
 }
